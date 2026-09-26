@@ -1,0 +1,133 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: cf2da0b25fac4d67b81acc30745121a9, type: 3}
+  m_Name: Level 03
+  m_EditorClassIdentifier: 
+  levelName: Level3
+  width: 5
+  height: 5
+  traySize: 2
+  cells:
+  - enabled: 1
+    hasJelly: 1
+    jelly:
+      colors: 04000000040000000400000004000000
+  - enabled: 1
+    hasJelly: 1
+    jelly:
+      colors: 05000000050000000500000005000000
+  - enabled: 1
+    hasJelly: 0
+    jelly:
+      colors: 01000000010000000100000001000000
+  - enabled: 1
+    hasJelly: 1
+    jelly:
+      colors: 03000000030000000300000003000000
+  - enabled: 1
+    hasJelly: 1
+    jelly:
+      colors: 04000000040000000400000004000000
+  - enabled: 1
+    hasJelly: 1
+    jelly:
+      colors: 05000000050000000500000005000000
+  - enabled: 1
+    hasJelly: 1
+    jelly:
+      colors: 02000000020000000200000002000000
+  - enabled: 1
+    hasJelly: 0
+    jelly:
+      colors: 01000000010000000100000001000000
+  - enabled: 1
+    hasJelly: 1
+    jelly:
+      colors: 05000000050000000100000001000000
+  - enabled: 1
+    hasJelly: 1
+    jelly:
+      colors: 02000000020000000200000002000000
+  - enabled: 1
+    hasJelly: 1
+    jelly:
+      colors: 04000000040000000400000004000000
+  - enabled: 1
+    hasJelly: 1
+    jelly:
+      colors: 05000000050000000500000005000000
+  - enabled: 1
+    hasJelly: 0
+    jelly:
+      colors: 01000000010000000100000001000000
+  - enabled: 1
+    hasJelly: 1
+    jelly:
+      colors: 03000000030000000200000002000000
+  - enabled: 1
+    hasJelly: 1
+    jelly:
+      colors: 04000000040000000400000004000000
+  - enabled: 1
+    hasJelly: 1
+    jelly:
+      colors: 02000000020000000200000002000000
+  - enabled: 1
+    hasJelly: 1
+    jelly:
+      colors: 01000000010000000100000001000000
+  - enabled: 1
+    hasJelly: 0
+    jelly:
+      colors: 01000000010000000100000001000000
+  - enabled: 1
+    hasJelly: 1
+    jelly:
+      colors: 05000000050000000500000005000000
+  - enabled: 1
+    hasJelly: 1
+    jelly:
+      colors: 02000000020000000200000002000000
+  - enabled: 1
+    hasJelly: 1
+    jelly:
+      colors: 04000000040000000400000004000000
+  - enabled: 1
+    hasJelly: 1
+    jelly:
+      colors: 03000000030000000300000003000000
+  - enabled: 1
+    hasJelly: 1
+    jelly:
+      colors: 02000000020000000500000005000000
+  - enabled: 1
+    hasJelly: 1
+    jelly:
+      colors: 01000000010000000100000001000000
+  - enabled: 1
+    hasJelly: 1
+    jelly:
+      colors: 04000000040000000400000004000000
+  sequence:
+  - colors: 05000000050000000500000005000000
+  - colors: 03000000030000000300000003000000
+  - colors: 05000000050000000300000003000000
+  - colors: 02000000020000000500000005000000
+  - colors: 03000000050000000300000005000000
+  - colors: 01000000010000000300000003000000
+  - colors: 05000000050000000500000005000000
+  - colors: 03000000030000000200000002000000
+  - colors: 05000000050000000100000001000000
+  - colors: 03000000030000000300000003000000
+  - colors: 05000000050000000500000005000000
+  - colors: 03000000030000000300000003000000
+  goals: 000000000000000000000000060000000000000008000000

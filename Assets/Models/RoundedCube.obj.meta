@@ -1,0 +1,17 @@
+fileFormatVersion: 2
+guid: 366974e5d8b6401dae4c8f2f80c12291
+ModelImporter:
+  externalObjects: {}
+  serializedVersion: 22200
+  internalIDToNameTable:
+  - first:
+      43: 4300000
+    second: RoundedCube
+  materials:
+    materialImportMode: 0
+  meshes:
+    globalScale: 1
+    useFileScale: 0
+    meshCompression: 0
+    addColliders: 0
+  isReadable: 0
