@@ -5,5 +5,9 @@ A recreation of Jelly Field gameplay built with Unity 3D for Android, featuring 
 🎬 [Watch the gameplay video](https://www.youtube.com/shorts/CEx4Z_VsmpQ)
 
 
-https://github.com/user-attachments/assets/e1b61401-93b1-49c1-a582-82d1f3b92d21
+
+
+https://github.com/user-attachments/assets/e06fd6fe-7f0b-4e21-bfde-230e575b75d4
+
+
 
