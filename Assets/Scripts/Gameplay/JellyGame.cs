@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using System.Threading;
 using Cysharp.Threading.Tasks;
 using UnityEngine;
-using UnityEngine.InputSystem;
+using UnityEngine.EventSystems;
 using JellyField.Core;
 using JellyField.Data;
 using JellyField.Rendering;
@@ -11,7 +11,7 @@ using JellyField.UI;
 
 namespace JellyField.Gameplay
 {
-    public class JellyGame : MonoBehaviour
+    public class JellyGame : MonoBehaviour, IPointerDownHandler, IPointerUpHandler, IBeginDragHandler, IDragHandler, IEndDragHandler
     {
         private const int HighlightMs = 280;
         private const int ClearMs = 380;
@@ -64,7 +64,7 @@ namespace JellyField.Gameplay
         private bool dragging;
         private bool leftTray;
         private int previewCell = -1;
-        private Vector2 pressPosition;
+        private int pointerId;
         private Vector3 lastDragPoint;
         private Rect lastSafeArea;
         private Vector2 lastScreenSize;
@@ -202,6 +202,7 @@ namespace JellyField.Gameplay
                 trayZ = ray.GetPoint(distance).z;
             for (int i = 0; i < traySlots.Length; i++)
                 traySlots[i].transform.localPosition = TrayPosition(i);
+            Physics.SyncTransforms();
         }
 
         private Vector3 PointerWorld(Vector2 screenPosition)
@@ -226,108 +227,95 @@ namespace JellyField.Gameplay
             if (session == null)
                 return;
             ResizeCamera();
-            // A full board can still free cells during a running clear animation.
-            if (session.Won || (!busy && session.Lost))
+            if (selected >= 0 && (session.Won || (!busy && session.Lost)))
+                CancelDrag();
+        }
+
+        public void OnPointerDown(PointerEventData data)
+        {
+            if (data.button != PointerEventData.InputButton.Left || dragging ||
+                !(data.pointerCurrentRaycast.module is PhysicsRaycaster) ||
+                session == null || session.Won || (!busy && session.Lost))
+                return;
+
+            for (int i = 0; i < session.Tray.Length; i++)
             {
-                if (selected >= 0)
-                    CancelDrag();
+                if (data.pointerCurrentRaycast.gameObject != traySlots[i].gameObject || session.Tray[i] == null)
+                    continue;
+                CancelDrag();
+                selected = i;
+                pointerId = data.pointerId;
+                dragging = true;
+                lastDragPoint = PointerWorld(data.position + Vector2.up * (Screen.height * dragOffset));
+                traySlots[i].Jelly.Kick(1.2f);
                 return;
             }
 
-            Vector2 position;
-            bool down, held, up;
-            if (Touchscreen.current != null && (Touchscreen.current.primaryTouch.press.isPressed || Touchscreen.current.primaryTouch.press.wasReleasedThisFrame))
+            if (selected >= 0)
             {
-                var touch = Touchscreen.current.primaryTouch;
-                position = touch.position.ReadValue();
-                down = touch.press.wasPressedThisFrame;
-                held = touch.press.isPressed;
-                up = touch.press.wasReleasedThisFrame;
-            }
-            else if (Mouse.current != null)
-            {
-                var mouse = Mouse.current;
-                position = mouse.position.ReadValue();
-                down = mouse.leftButton.wasPressedThisFrame;
-                held = mouse.leftButton.isPressed;
-                up = mouse.leftButton.wasReleasedThisFrame;
-            }
-            else
-                return;
-            Vector3 point = PointerWorld(position);
-            if (down)
-                BeginPointer(point, position);
-            if (dragging && (held || up) && selected >= 0)
-            {
-                Vector3 tray = TrayPosition(selected);
-                if (!leftTray && (Mathf.Abs(point.x - tray.x) >= .65f || Mathf.Abs(point.z - tray.z) >= .7f))
-                {
-                    leftTray = true;
-                    PlayFeedback(pickupSound);
-                }
-
-                // Preview and placement follow the jelly, including its pointer offset.
-                point = PointerWorld(position + Vector2.up * (Screen.height * dragOffset));
-                traySlots[selected].Jelly.transform.position = new Vector3(point.x, .55f, point.z);
-                traySlots[selected].Jelly.DragMotion(point - lastDragPoint);
-                lastDragPoint = point;
-                int cell = NearestCell(point);
-                ShowPreview(cell);
-                cellHighlight.gameObject.SetActive(cell >= 0);
-                if (cell >= 0)
-                    cellHighlight.localPosition = CellPosition(cell) + Vector3.up * .02f;
-            }
-
-            if (up && dragging && selected >= 0)
-            {
-                traySlots[selected].Jelly.EndDragMotion();
-                dragging = false;
-                ClearPreview();
-                cellHighlight.gameObject.SetActive(false);
-                int cell = NearestCell(point);
+                int cell = NearestCell(PointerWorld(data.position));
                 if (cell >= 0)
                     Commit(selected, cell);
                 else
-                {
-                    if (leftTray)
-                        PlayFeedback(returnSound);
-                    leftTray = false;
-                    traySlots[selected].Jelly.transform.localPosition = Vector3.zero;
-                    traySlots[selected].Jelly.Kick(.8f);
-                    // A tap leaves the jelly selected; an invalid drag cancels it.
-                    if (Vector2.Distance(position, pressPosition) > 18)
-                        selected = -1;
-                }
+                    CancelDrag();
             }
         }
 
-        private void BeginPointer(Vector3 point, Vector2 screenPosition)
+        public void OnBeginDrag(PointerEventData data)
         {
-            int hit = -1;
-            for (int i = 0; i < session.Tray.Length; i++)
-            {
-                Vector3 tray = TrayPosition(i);
-                if (session.Tray[i] != null && Mathf.Abs(point.x - tray.x) < .65f && Mathf.Abs(point.z - tray.z) < .7f)
-                    hit = i;
-            }
+            OnDrag(data);
+        }
 
-            if (hit >= 0)
+        public void OnDrag(PointerEventData data)
+        {
+            if (!dragging || data.pointerId != pointerId)
+                return;
+            if (session.Won || (!busy && session.Lost))
             {
                 CancelDrag();
-                selected = hit;
-                dragging = true;
-                pressPosition = screenPosition;
-                lastDragPoint = PointerWorld(screenPosition + Vector2.up * (Screen.height * dragOffset));
-                traySlots[hit].Jelly.Kick(1.2f);
+                return;
             }
-            else if (selected >= 0)
+            if (!leftTray && data.pointerCurrentRaycast.gameObject != traySlots[selected].gameObject)
             {
-                int cell = NearestCell(point);
-                if (cell >= 0)
-                    Commit(selected, cell);
-                else
-                    CancelDrag();
+                leftTray = true;
+                PlayFeedback(pickupSound);
             }
+
+            Vector3 point = PointerWorld(data.position + Vector2.up * (Screen.height * dragOffset));
+            traySlots[selected].Jelly.transform.position = new Vector3(point.x, .55f, point.z);
+            traySlots[selected].Jelly.DragMotion(point - lastDragPoint);
+            lastDragPoint = point;
+            int cell = data.pointerCurrentRaycast.module is UnityEngine.UI.GraphicRaycaster ? -1 : NearestCell(point);
+            ShowPreview(cell);
+            cellHighlight.gameObject.SetActive(cell >= 0);
+            if (cell >= 0)
+                cellHighlight.localPosition = CellPosition(cell) + Vector3.up * .02f;
+        }
+
+        public void OnPointerUp(PointerEventData data)
+        {
+            // A tap keeps the piece selected; a drag is completed by OnEndDrag.
+            if (dragging && data.pointerId == pointerId && !data.dragging)
+                dragging = false;
+        }
+
+        public void OnEndDrag(PointerEventData data)
+        {
+            if (!dragging || data.pointerId != pointerId)
+                return;
+            OnDrag(data);
+            if (!dragging)
+                return;
+            traySlots[selected].Jelly.EndDragMotion();
+            ClearPreview();
+            int cell = NearestCell(lastDragPoint);
+            bool overUi = data.pointerCurrentRaycast.module is UnityEngine.UI.GraphicRaycaster;
+            if (!overUi && cell >= 0 && Commit(selected, cell))
+                return;
+            if (leftTray)
+                PlayFeedback(returnSound);
+            traySlots[selected].Jelly.Kick(.8f);
+            CancelDrag();
         }
 
         private void CancelDrag()
