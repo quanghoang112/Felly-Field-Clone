@@ -199,6 +199,8 @@ namespace JellyField.Rendering
 
         private void LateUpdate()
         {
+            if (dragMoving && Time.time - lastDragTime > .09f)
+                EndDragMotion();
             if (dragMoving)
                 topOffset = Vector3.SmoothDamp(topOffset, dragTarget, ref dragVelocity, .11f);
             bool deforming = topOffset != Vector3.zero || squash != 0;
