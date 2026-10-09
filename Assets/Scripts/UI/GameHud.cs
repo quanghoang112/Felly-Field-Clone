@@ -6,11 +6,14 @@ using UnityEngine;
 using UnityEngine.UI;
 using TMPro;
 using JellyField.Core;
+using JellyField.Gameplay;
 
 namespace JellyField.UI
 {
     public class GameHud : MonoBehaviour
     {
+        [SerializeField]
+        private JellyGame game;
         [SerializeField]
         private RectTransform safe;
         [SerializeField]
@@ -130,9 +133,27 @@ namespace JellyField.UI
             }
         }
 
+        private void OnEnable()
+        {
+            game.Won += OnWon;
+            game.Lost += OnLost;
+        }
+
         private void OnDisable()
         {
+            game.Won -= OnWon;
+            game.Lost -= OnLost;
             CancelCollection();
+        }
+
+        private void OnWon()
+        {
+            ShowResult(true, game.IsLastLevel);
+        }
+
+        private void OnLost()
+        {
+            ShowResult(false, false);
         }
 
         public void HideResult()
@@ -140,7 +161,7 @@ namespace JellyField.UI
             result.SetActive(false);
         }
 
-        public void ShowResult(bool won, bool last)
+        private void ShowResult(bool won, bool last)
         {
             result.SetActive(true);
             resultTitle.text = won ? "LEVEL COMPLETE" : "NO SPACE LEFT";

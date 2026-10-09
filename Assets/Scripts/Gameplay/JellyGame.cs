@@ -13,6 +13,10 @@ namespace JellyField.Gameplay
 {
     public class JellyGame : MonoBehaviour, IPointerDownHandler, IPointerUpHandler, IBeginDragHandler, IDragHandler, IEndDragHandler
     {
+        public event Action Won;
+        public event Action Lost;
+        public bool IsLastLevel => levelIndex == levels.Length - 1;
+
         private const int HighlightMs = 280;
         private const int ClearMs = 380;
         [Header("Objects already placed in the scene")]
@@ -58,6 +62,7 @@ namespace JellyField.Gameplay
         private int levelIndex;
         private int selected = -1;
         private bool busy;
+        private bool ended;
         private readonly Queue<int> pendingMoves = new Queue<int>();
         private readonly HashSet<int> pendingCells = new HashSet<int>();
         private ClearWave clearingWave;
@@ -95,6 +100,7 @@ namespace JellyField.Gameplay
             pendingCells.Clear();
             levelCts = CancellationTokenSource.CreateLinkedTokenSource(destroyCancellationToken);
             busy = false;
+            ended = false;
             clearingWave = null;
             dragging = false;
             leftTray = false;
@@ -450,10 +456,14 @@ namespace JellyField.Gameplay
                 }
 
                 hud.Refresh(session, levelIndex);
-                if (session.Won || session.Lost)
+                if (!ended && (session.Won || session.Lost))
                 {
+                    ended = true;
                     CancelDrag();
-                    hud.ShowResult(session.Won, levelIndex == levels.Length - 1);
+                    if (session.Won)
+                        Won?.Invoke();
+                    else
+                        Lost?.Invoke();
                 }
             }
             catch (OperationCanceledException)when (token.IsCancellationRequested)

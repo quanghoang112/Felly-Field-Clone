@@ -2224,6 +2224,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: cf76c93c43d74ef43b2bb9d81eb2e3c0, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  game: {fileID: 1172}
   safe: {fileID: 1085}
   levelLabel: {fileID: 1093}
   resultTitle: {fileID: 1144}
