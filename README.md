@@ -15,5 +15,5 @@ Levels are configured with ScriptableObjects and a custom Unity Inspector. Desig
 
 | Board and goals | Tray sequence and level tools |
 | --- | --- |
-| ![Level Inspector showing board layout, goals, and color palette](Docs/Images/level-editor-board.png) | ![Level Inspector showing the tray sequence and level tools](Docs/Images/level-editor-tray.png) |
+| ![Level Inspector showing board layout, goals, and color palette](Docs/Images/level-editor-board.png) | ![Level Inspector showing the tray sequence and level tools](Docs/Images/level-editor-tray-clean.png) |
 
