@@ -9,5 +9,11 @@ A recreation of Jelly Field gameplay built with Unity 3D for Android, featuring 
 
 https://github.com/user-attachments/assets/e06fd6fe-7f0b-4e21-bfde-230e575b75d4
 
+## Level Editor
 
+Levels are configured with ScriptableObjects and a custom Unity Inspector. Designers can edit the board mask, paint jelly colors, set collection goals, and arrange the tray sequence without changing gameplay code. The editor also includes tools to find a winning route and generate a tray sequence with a verified solution.
+
+| Board and goals | Tray sequence and level tools |
+| --- | --- |
+| ![Level Inspector showing board layout, goals, and color palette](Docs/Images/level-editor-board.png) | ![Level Inspector showing the tray sequence and level tools](Docs/Images/level-editor-tray.png) |
 
